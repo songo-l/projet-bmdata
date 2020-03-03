@@ -1,5 +1,5 @@
 # Projet-bmdata
-Projet de Big Multimédia Data effectué par Maëlle Gallois, Etienne Candelot, Xyléan Broeders, Théodore Rézel (basé sur [ce projet](https://github.com/hnjiakai/BeautyGAN) et [celui-ci](https://github.com/baldFemale/beautyGAN-tf-Implement).
+Projet de Big Multimédia Data effectué par Maëlle Gallois, Etienne Candelot, Xyléan Broeders, Théodore Rézel (basé sur [ce projet](https://github.com/hnjiakai/BeautyGAN) et [celui-ci](https://github.com/baldFemale/beautyGAN-tf-Implement)).
 
 ## TO DO :
 ### Préliminaires
