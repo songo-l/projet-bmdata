@@ -1,2 +1,8 @@
-*/ipynb_checkpoints
+### Fichiers
+Unititled.ipynb
+
+### Dossiers jupyter
+*.ipynb_checkpoints/
+
+### Dossiers
 all_images/
