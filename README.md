@@ -1,9 +1,14 @@
 # Projet-bmdata
 Projet de Big Multimédia Data effectué par Maëlle Gallois, Etienne Candelot, Xyléan Broeders, Théodore Rézel (basé sur [ce projet](https://github.com/hnjiakai/BeautyGAN) et [celui-ci](https://github.com/baldFemale/beautyGAN-tf-Implement)).
 
-# Generator model
+## Generator model
 
 ![Generator model](generator_model.png)
+
+## Discriminator model
+
+![Discriminator model](discriminator_model.png)
+
 ## TO DO :
 ### Préliminaires
 - [ ] récupérer les données
@@ -18,7 +23,7 @@ Projet de Big Multimédia Data effectué par Maëlle Gallois, Etienne Candelot, 
 - [x] Chargement des données
 - [ ] Pré-traitement des données
 - [x] Generator
-- [ ] Discriminator
+- [x] Discriminator
 - [ ] Loss functions
 ### Executer le code
 - [ ] Voir si ça compile
