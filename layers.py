@@ -48,7 +48,7 @@ def instance_norm(x):
         out = scale*tf.div(x-mean,tf.sqrt(var+epsilon))+offset
         return out
 
-class Conv2D_Custom(tf.keras.Model):
+class Conv2D_Custom(tensorflow.keras.Model):
     def __init__(self, filters = 64, kernel_size = 7, strides = 1, padding = 'VALID', name = 'conv2d', stddev=0.02,
                  do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
         
