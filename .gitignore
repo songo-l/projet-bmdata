@@ -6,4 +6,7 @@ Untitled.ipynb
 
 ### Dossiers
 all_images/
-__pycache__/
+*__pycache__/
+
+### Dossiers PyCharm
+.idea/ 
