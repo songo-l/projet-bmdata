@@ -8,3 +8,5 @@ def perc_loss_cal(input_tensor):
     return initial_model.get_layer('block4_conv1').output
 
 #loss sur le discriminator
+def d_loss(data,data_gen)
+    return tf.reduce_mean(tf.square(data_gen))+tf.reduce_mean(tf.squared_difference(data,1))/2.0
