@@ -1,6 +1,7 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Lambda, Input, concatenate, Activation, Wrapper, BatchNormalization, LeakyReLU, ReLU
-#from tensorflow_addons.layers import InstanceNormalization
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Lambda, Input, concatenate, Activation, Wrapper, \
+    BatchNormalization, LeakyReLU, ReLU
+# from tensorflow_addons.layers import InstanceNormalization
 from tensorflow.keras.models import Model
 from tensorflow.python.eager import def_function
 from tensorflow.python.framework import dtypes, tensor_shape
@@ -8,7 +9,8 @@ from tensorflow.python.keras import Sequential, layers, initializers, backend as
 from tensorflow.python.ops import array_ops, math_ops
 
 
-def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='conv2d', stddev=0.02, do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
+def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='conv2d', stddev=0.02, do_relu=True,
+                 do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
     result = Sequential(name=name)
     result.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
                       kernel_initializer=tf.random_normal_initializer(0., 0.02),
@@ -16,7 +18,7 @@ def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='co
 
     if do_norm:
         result.add(BatchNormalization())
-        #result.add(InstanceNormalization())
+        # result.add(InstanceNormalization())
 
     if do_relu:
         if leaky_relu_alpha != 0:
@@ -25,6 +27,7 @@ def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='co
             result.add(ReLU())
 
     return result
+
 
 def CustomConv2DTranspose(filters=64, kernel_size=7, strides=1, padding='VALID', name='deconv2d', stddev=0.02,
                           do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
@@ -35,7 +38,7 @@ def CustomConv2DTranspose(filters=64, kernel_size=7, strides=1, padding='VALID',
 
     if do_norm:
         result.add(tf.keras.layers.BatchNormalization())
-        #result.add(InstanceNormalization())
+        # result.add(InstanceNormalization())
 
     if do_relu:
         if leaky_relu_alpha != 0:
@@ -44,6 +47,7 @@ def CustomConv2DTranspose(filters=64, kernel_size=7, strides=1, padding='VALID',
             result.add(ReLU())
 
     return result
+
 
 class ResnetBlock(Model):
     def __init__(self, filters=32, name='ResNet_Block'):
@@ -60,6 +64,7 @@ class ResnetBlock(Model):
         x = self.conv2b(x)
 
         return tf.nn.relu(input_tensor + x)
+
 
 class SpectralNormalization(Wrapper):
     """
@@ -97,10 +102,10 @@ class SpectralNormalization(Wrapper):
     @def_function.function
     def call(self, inputs, training=None):
         """Call `Layer`"""
-        if training==None:
+        if training == None:
             training = K.learning_phase()
 
-        if training==True:
+        if training == True:
             # Recompute weights for each forward pass
             self._compute_weights()
 
@@ -116,9 +121,9 @@ class SpectralNormalization(Wrapper):
         eps = 1e-12
         _u = array_ops.identity(self.u)
         _v = math_ops.matmul(_u, array_ops.transpose(w_reshaped))
-        _v = _v / math_ops.maximum(math_ops.reduce_sum(_v**2)**0.5, eps)
+        _v = _v / math_ops.maximum(math_ops.reduce_sum(_v ** 2) ** 0.5, eps)
         _u = math_ops.matmul(_v, w_reshaped)
-        _u = _u / math_ops.maximum(math_ops.reduce_sum(_u**2)**0.5, eps)
+        _u = _u / math_ops.maximum(math_ops.reduce_sum(_u ** 2) ** 0.5, eps)
 
         self.u.assign(_u)
         sigma = math_ops.matmul(math_ops.matmul(_v, w_reshaped), array_ops.transpose(_u))
@@ -128,4 +133,3 @@ class SpectralNormalization(Wrapper):
     def compute_output_shape(self, input_shape):
         return tensor_shape.TensorShape(
             self.layer.compute_output_shape(input_shape).as_list())
-
