@@ -10,3 +10,7 @@ def perc_loss_cal(input_tensor):
 #loss sur le discriminator
 def d_loss(data,data_gen):
     return tf.reduce_mean(tf.square(data_gen))+tf.reduce_mean(tf.squared_difference(data,1))/2.0
+
+# Make up loss
+def make_up_loss(generated, target):
+    return 0
