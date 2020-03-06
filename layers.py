@@ -8,6 +8,59 @@ from tensorflow.python.keras import Sequential, layers, initializers, backend as
 from tensorflow.python.ops import array_ops, math_ops
 
 
+def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='conv2d', stddev=0.02, do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
+    result = Sequential(name=name)
+    result.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
+                      kernel_initializer=tf.random_normal_initializer(0., 0.02),
+                      bias_initializer=tf.constant_initializer()))
+
+    if do_norm:
+        result.add(BatchNormalization())
+        #result.add(InstanceNormalization())
+
+    if do_relu:
+        if leaky_relu_alpha != 0:
+            result.add(LeakyReLU(alpha=leaky_relu_alpha))
+        else:
+            result.add(ReLU())
+
+    return result
+
+def CustomConv2DTranspose(filters=64, kernel_size=7, strides=1, padding='VALID', name='deconv2d', stddev=0.02,
+                          do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
+    result = Sequential(name=name)
+    result.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
+                               kernel_initializer=tf.random_normal_initializer(0., stddev),
+                               bias_initializer=tf.constant_initializer()))
+
+    if do_norm:
+        result.add(tf.keras.layers.BatchNormalization())
+        #result.add(InstanceNormalization())
+
+    if do_relu:
+        if leaky_relu_alpha != 0:
+            result.add(LeakyReLU(alpha=leaky_relu_alpha))
+        else:
+            result.add(ReLU())
+
+    return result
+
+class ResnetBlock(Model):
+    def __init__(self, filters=32, name='ResNet_Block'):
+        super(ResnetBlock, self).__init__(name=name)
+
+        self.conv2a = CustomConv2D(filters=filters, kernel_size=3, strides=1, padding='VALID', name='c1')
+        self.conv2b = CustomConv2D(filters=filters, kernel_size=3, strides=1, padding='VALID', name='c2', do_relu=False)
+
+    def call(self, input_tensor, training=False):
+        x = tf.pad(input_tensor, [[0, 0], [1, 1], [1, 1], [0, 0]], "REFLECT")
+        x = self.conv2a(x)
+
+        x = tf.pad(x, [[0, 0], [1, 1], [1, 1], [0, 0]], "REFLECT")
+        x = self.conv2b(x)
+
+        return tf.nn.relu(input_tensor + x)
+
 class SpectralNormalization(Wrapper):
     """
     Attributes:
@@ -76,58 +129,3 @@ class SpectralNormalization(Wrapper):
         return tensor_shape.TensorShape(
             self.layer.compute_output_shape(input_shape).as_list())
 
-
-def CustomConv2D(filters=64, kernel_size=7, strides=1, padding='VALID', name='conv2d', stddev=0.02, do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
-    result = Sequential(name=name)
-    result.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
-                      kernel_initializer=tf.random_normal_initializer(0., 0.02),
-                      bias_initializer=tf.constant_initializer()))
-
-    if do_norm:
-        result.add(BatchNormalization())
-        #result.add(InstanceNormalization())
-
-    if do_relu:
-        if leaky_relu_alpha != 0:
-            result.add(LeakyReLU(alpha=leaky_relu_alpha))
-        else:
-            result.add(ReLU())
-
-    return result
-
-
-class ResnetBlock(Model):
-    def __init__(self, filters=32, name='ResNet_Block'):
-        super(ResnetBlock, self).__init__(name=name)
-
-        self.conv2a = CustomConv2D(filters=filters, kernel_size=3, strides=1, padding='VALID', name='c1')
-        self.conv2b = CustomConv2D(filters=filters, kernel_size=3, strides=1, padding='VALID', name='c2', do_relu=False)
-
-    def call(self, input_tensor, training=False):
-        x = tf.pad(input_tensor, [[0, 0], [1, 1], [1, 1], [0, 0]], "REFLECT")
-        x = self.conv2a(x)
-
-        x = tf.pad(x, [[0, 0], [1, 1], [1, 1], [0, 0]], "REFLECT")
-        x = self.conv2b(x)
-
-        return tf.nn.relu(input_tensor + x)
-
-
-def CustomConv2DTranspose(filters=64, kernel_size=7, strides=1, padding='VALID', name='deconv2d', stddev=0.02,
-                          do_relu=True, do_norm=True, do_sp_norm=False, leaky_relu_alpha=0.2):
-    result = Sequential(name=name)
-    result.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
-                               kernel_initializer=tf.random_normal_initializer(0., stddev),
-                               bias_initializer=tf.constant_initializer()))
-
-    if do_norm:
-        result.add(tf.keras.layers.BatchNormalization())
-        #result.add(InstanceNormalization())
-
-    if do_relu:
-        if leaky_relu_alpha != 0:
-            result.add(LeakyReLU(alpha=leaky_relu_alpha))
-        else:
-            result.add(ReLU())
-
-    return result
